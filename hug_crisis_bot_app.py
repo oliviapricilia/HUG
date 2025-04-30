@@ -138,7 +138,7 @@ if st.button(LABELS["simulate_btn"]):
         mean_reversion = mu * (baseline - current_mood)
 
         if use_stoch_vol:
-            # Heston-like volatility update
+            # Heston-like stochastic volatility
             kappa = 1.5
             theta = sigma_base
             eta = 0.3
@@ -161,8 +161,8 @@ if st.button(LABELS["simulate_btn"]):
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.plot(mood, label="Mood", color="blue")
     ax.axhline(collapse_threshold, color='red', linestyle='--', label="Tipping Point")
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Mood Level")
+    ax.set_xlabel("Time" if lang == "English" else "Waktu")
+    ax.set_ylabel("Mood Level" if lang == "English" else "Tingkat Mood")
     ax.legend()
     st.pyplot(fig)
 
@@ -173,27 +173,26 @@ if st.button(LABELS["simulate_btn"]):
         st.success(LABELS["feedback_ok"])
 
     # LaTeX model
-    st.markdown("### 📐 Model Explanation" if lang == "English" else "### 📐 Penjelasan Model")
+    st.markdown("### 📊 Model Explanation" if lang == "English" else "### 📊 Penjelasan Model")
     st.latex(r'dM_t = \mu (M^* - M_t)\,dt + \sigma_t\,dW_t + J_t\,dN_t')
+    st.latex(r'd\sigma_t = \kappa(\theta - \sigma_t)\,dt + \eta\,dZ_t')
 
-    with st.expander("📊 Parameter Descriptions" if lang == "English" else "📊 Deskripsi Parameter"):
-        st.markdown(r"""
-- \( M_t \): Current mood
-- \( M^* \): Baseline mood (e.g. 60)
-- \( \mu \): Recovery speed
-- \( \sigma_t \): Emotional volatility, either adaptive or stochastic
-- \( dW_t \): Random mood shifts (Brownian motion)
-- \( J_t \): Mood shocks (trauma, conflict)
-- \( dN_t \): Random occurrence of shocks (Poisson process)
-        """ if lang == "English" else r"""
-- \( M_t \): Mood saat ini
-- \( M^* \): Mood ideal (misal: 60)
-- \( \mu \): Kecepatan pemulihan
-- \( \sigma_t \): Volatilitas emosi, adaptif atau stokastik
-- \( dW_t \): Perubahan mood acak (proses Brown)
-- \( J_t \): Guncangan emosi (trauma, konflik)
-- \( dN_t \): Kejadian acak dari guncangan (proses Poisson)
-        """)
+    with st.expander("\ud83d\udcca Parameter Descriptions" if lang == "English" else "\ud83d\udcca Deskripsi Parameter"):
+        st.markdown("""
+- $M_t$: Current mood / Mood saat ini  
+- $M^*$: Baseline mood (e.g. 60) / Mood ideal (misal: 60)  
+- $\mu$: Recovery rate / Kecepatan pemulihan  
+- $\sigma_t$: Emotional volatility (adaptive or stochastic) / Volatilitas emosi (adaptif atau stokastik)  
+- $dW_t$: Random emotional fluctuation (Brownian motion) / Fluktuasi acak (proses Brown)  
+- $J_t$: Emotional shock (trauma/conflict) / Guncangan emosi (trauma/konflik)  
+- $dN_t$: Random occurrence of shocks (Poisson) / Kejadian acak dari guncangan (Poisson)  
+- $d\sigma_t$: Volatility dynamics / Dinamika volatilitas  
+- $\kappa$: Speed of mean reversion / Kecepatan kembali ke rata-rata  
+- $\theta$: Long-term average volatility / Rata-rata jangka panjang dari volatilitas  
+- $\eta$: Noise strength in volatility / Kekuatan gangguan dalam volatilitas  
+- $dZ_t$: Random noise for volatility / Kebisingan acak untuk volatilitas
+""")
+
 
 # --- HUG Info Section ---
 st.markdown("## 💬 About HUG")

@@ -49,16 +49,6 @@ bullying_input = st.selectbox(TEXT["bullying_check"][lang], ["No", "Maybe", "Yes
 stress_modifier = {"No": 0.05, "Maybe": 0.1, "Yes": 0.2}[bullying_input]
 
 # Simulation parameters
-T = 50
-mu = 0.0
-theta = 5
-kappa = 0.3
-eta = 1.0
-mu_J = -15
-sigma_J = 5
-p_jump = 0.1 + stress_modifier
-
-# Simulation
 if st.button(TEXT["simulate_button"][lang]):
     mood = [mood0]
     vol = [theta]
@@ -70,7 +60,14 @@ if st.button(TEXT["simulate_button"][lang]):
         d_sigma = kappa * (theta - vol[-1]) * dt + eta * np.random.normal()
         sigma_t = max(0.1, vol[-1] + d_sigma)
         dW = np.random.normal() * np.sqrt(dt)
-        jump = np.random.normal(mu_J, sigma_J) if np.random.rand() < p_jump else 0
+
+        # Jump: sometimes negative, sometimes positive
+        if np.random.rand() < p_jump:
+            jump_direction = np.random.choice([-15, 10], p=[0.7, 0.3])
+            jump = np.random.normal(jump_direction, sigma_J)
+        else:
+            jump = 0
+
         dM = mu * dt + sigma_t * dW + jump
         M_t = max(0, min(100, mood[-1] + dM))
         vol.append(sigma_t)

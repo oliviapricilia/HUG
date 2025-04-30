@@ -49,6 +49,16 @@ bullying_input = st.selectbox(TEXT["bullying_check"][lang], ["No", "Maybe", "Yes
 stress_modifier = {"No": 0.05, "Maybe": 0.1, "Yes": 0.2}[bullying_input]
 
 # Simulation parameters
+# Parameters
+T = 50
+mu = 0.5  # small positive drift (mood tends to recover)
+theta = 5
+kappa = 0.3
+eta = 1.0
+sigma_J = 5
+p_jump = 0.05 + stress_modifier  # more realistic jump frequency
+
+# Simulation
 if st.button(TEXT["simulate_button"][lang]):
     mood = [mood0]
     vol = [theta]
@@ -72,7 +82,7 @@ if st.button(TEXT["simulate_button"][lang]):
         M_t = max(0, min(100, mood[-1] + dM))
         vol.append(sigma_t)
         mood.append(M_t)
-
+   
     # Plotting
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
     ax1.plot(mood, label="Mood", color="blue", linewidth=2)

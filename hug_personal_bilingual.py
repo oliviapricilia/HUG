@@ -58,9 +58,9 @@ LABELS = {
             "Bahasa Indonesia": "✅ Mood kamu terlihat stabil dan adaptif."
         },
         "risk": {
-            "English": "⚠️ Mood simulation suggests emotional collapse risk. Consider reaching out.",
-            "Bahasa Indonesia": "⚠️ Simulasi menunjukkan risiko kejatuhan emosi. Pertimbangkan mencari bantuan."
-        }
+    "English": "⚠️ Your simulation shows risk of approaching an emotional tipping point. This may be a good moment to reach out or slow down.",
+    "Bahasa Indonesia": "⚠️ Simulasi menunjukkan kamu mendekati titik kritis emosional. Mungkin ini saat yang baik untuk bicara atau melambat sejenak."
+  }
     },
     "math_section": {
         "title": {

@@ -127,13 +127,12 @@ if st.button(LABELS["simulate_btn"]):
     mood = [mood0]
     np.random.seed(42)
 
-    for t in range(T):
-        dW = np.random.normal()
-        jump = np.random.normal(mu_J, sigma_J) if np.random.rand() < p_jump else 0
-        dM = mu + sigma * dW + jump
-        M_t = max(0, min(100, mood[-1] + dM))
-        mood.append(M_t)
-
+    for _ in range(T):
+        dW = np.random.normal(scale=np.sqrt(1))  # Keep time step variance stable
+        jump = np.random.normal(loc=impact_input, scale=2) if np.random.rand() < p_jump else 0
+        dM = mu * 1 + sigma * dW + jump
+        next_mood = np.clip(mood[-1] + dM, 0, 100)
+        mood.append(next_mood)
     # Plot
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.plot(mood, label="Mood", color="blue")

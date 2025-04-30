@@ -44,7 +44,7 @@ if st.button("🆘 I'm not feeling okay (Activate Crisis Mode)"):
 - **Text a friend** you trust and just say: "Hey, can we talk?"
         """)
 
-    st.stop()
+    #st.stop()
 
 if st.button("🚩 Help, I’m getting bullied"):
     st.markdown("## 💬 Bullying Support Bot")
@@ -59,7 +59,7 @@ if st.button("🚩 Help, I’m getting bullied"):
         st.markdown("🫂 Thank you for sharing. No one deserves that. You're not overreacting.")
         st.markdown("You might try keeping a small log of what happens and when, and talk to someone you trust. I'm here for more support anytime.")
 
-    st.stop()
+    #st.stop()
 
 
 # --- Input Labels Dictionary (English only for now) ---

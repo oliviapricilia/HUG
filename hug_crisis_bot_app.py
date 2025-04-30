@@ -194,6 +194,7 @@ if st.button(LABELS["simulate_btn"]):
 """)
 
 
+
 # --- HUG Info Section ---
 st.markdown("## 💬 About HUG")
 with st.expander("🌍 What HUG Aims to Solve"):

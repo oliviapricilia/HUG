@@ -39,7 +39,7 @@ if st.session_state.crisis_mode:
         if submitted and user_input:
             st.markdown(f"🫂 You said: *{user_input}*")
 
-            if any(word in user_input.lower() for word in ["hopeless", "give up", "suicidal", "kill", "end it"]):
+            if any(word in user_input.lower() for word in ["hopeless", "give up", "suicidal", "suicide", "kill", "end it", "die", "worthless"]):
                 st.warning("💔 That sounds really heavy. Please consider calling a crisis line or reaching out to someone you trust. You don’t have to go through this alone.")
             elif any(word in user_input.lower() for word in ["anxious", "nervous", "panic"]):
                 st.info("🫁 Try a grounding technique: 5 deep breaths, or list 3 things you can see, hear, and touch.")

@@ -4,11 +4,23 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="HUG – Personalized Mood Simulator", layout="centered")
 
+# --- Session state to persist crisis/bullying view ---
+if "crisis_mode" not in st.session_state:
+    st.session_state.crisis_mode = False
+if "bully_mode" not in st.session_state:
+    st.session_state.bully_mode = False
+
 # --- Language toggle ---
 lang = st.radio("\U0001F310 Language / Bahasa", ["English", "Bahasa Indonesia"])
 
 # --- Crisis Mode & Bullying SOS ---
 if st.button("🆘 I'm not feeling okay (Activate Crisis Mode)"):
+    st.session_state.crisis_mode = True
+
+if st.button("🚩 Help, I’m getting bullied"):
+    st.session_state.bully_mode = True
+
+if st.session_state.crisis_mode:
     st.markdown("## 🆘 Crisis Mode Activated")
     st.markdown("You're not alone. Let's take this one small step at a time.")
 
@@ -23,10 +35,10 @@ if st.button("🆘 I'm not feeling okay (Activate Crisis Mode)"):
         with st.form(key="crisis_chat"):
             user_input = st.text_area("What’s happening for you right now?")
             submitted = st.form_submit_button("Send")
-    
+
         if submitted and user_input:
             st.markdown(f"🫂 You said: *{user_input}*")
-    
+
             if any(word in user_input.lower() for word in ["hopeless", "give up", "suicidal", "kill", "end it"]):
                 st.warning("💔 That sounds really heavy. Please consider calling a crisis line or reaching out to someone you trust. You don’t have to go through this alone.")
             elif any(word in user_input.lower() for word in ["anxious", "nervous", "panic"]):
@@ -44,9 +56,9 @@ if st.button("🆘 I'm not feeling okay (Activate Crisis Mode)"):
 - **Text a friend** you trust and just say: "Hey, can we talk?"
         """)
 
-    #st.stop()
+    st.stop()
 
-if st.button("🚩 Help, I’m getting bullied"):
+if st.session_state.bully_mode:
     st.markdown("## 💬 Bullying Support Bot")
     st.markdown("That’s hard. Let’s talk it through – anonymously and safely.")
 
@@ -59,8 +71,7 @@ if st.button("🚩 Help, I’m getting bullied"):
         st.markdown("🫂 Thank you for sharing. No one deserves that. You're not overreacting.")
         st.markdown("You might try keeping a small log of what happens and when, and talk to someone you trust. I'm here for more support anytime.")
 
-    #st.stop()
-
+    st.stop()
 
 # --- Input Labels Dictionary (English only for now) ---
 LABELS = {
@@ -161,3 +172,4 @@ with st.expander("🛠 Features (Early Version)"):
 - **Escalation Paths** – Help, therapist chat, or peer community.
 - **Crisis Mode** – A supportive chatbot and immediate resources.
     """)
+

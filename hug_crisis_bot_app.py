@@ -112,28 +112,52 @@ mood0 = st.slider("Your mood right now:", 0, 100, 50)
 bullying_status = st.selectbox("Have you experienced bullying or social stress recently?", ["No", "Maybe", "Yes"])
 stress_modifier = {"No": 0.0, "Maybe": 0.05, "Yes": 0.1}[bullying_status]
 
-# --- Parameter Mapping ---
+# --- Mood Simulator Section ---
+use_stoch_vol = st.checkbox("Use stochastic volatility?" if lang == "English" else "Gunakan volatilitas stokastik?", value=False)
+
+# Parameters
 mu = recovery_input / 10
-sigma = 1 + (instability_input * 0.9)
+sigma_base = 1 + (instability_input * 0.9)
 mu_J = -3 * impact_input
 sigma_J = 5
-p_jump = 0.01 + (jumpiness_input / 100) + stress_modifier
+stress_modifier = {"No": 0.0, "Maybe": 0.05, "Yes": 0.1}[bullying_status]
+lambda_jump = 0.01 + (jumpiness_input / 100) + stress_modifier
 
-# --- Simulation ---
 T = 50
 collapse_threshold = 30
+baseline = 60
 
 if st.button(LABELS["simulate_btn"]):
     mood = [mood0]
+    vol = sigma_base
+    sigma_path = [vol]
     np.random.seed(42)
 
     for _ in range(T):
-        dW = np.random.normal(scale=np.sqrt(1))  # Keep time step variance stable
-        jump = np.random.normal(loc=impact_input, scale=2) if np.random.rand() < p_jump else 0
-        dM = mu * 1 + sigma * dW + jump
-        next_mood = np.clip(mood[-1] + dM, 0, 100)
+        current_mood = mood[-1]
+        mean_reversion = mu * (baseline - current_mood)
+
+        if use_stoch_vol:
+            # Heston-like volatility update
+            kappa = 1.5
+            theta = sigma_base
+            eta = 0.3
+            dZ = np.random.normal()
+            vol = max(vol + kappa * (theta - vol) + eta * dZ, 0.1)
+            sigma_t = vol
+            sigma_path.append(vol)
+        else:
+            sigma_t = sigma_base * (1 + (1 - current_mood / 100))
+
+        dW = np.random.normal()
+        num_jumps = np.random.poisson(lambda_jump)
+        jumps = np.random.normal(loc=mu_J, scale=sigma_J, size=num_jumps).sum() if num_jumps > 0 else 0
+
+        dM = mean_reversion + sigma_t * dW + jumps
+        next_mood = np.clip(current_mood + dM, 0, 100)
         mood.append(next_mood)
-    # Plot
+
+    # Plotting
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.plot(mood, label="Mood", color="blue")
     ax.axhline(collapse_threshold, color='red', linestyle='--', label="Tipping Point")
@@ -142,22 +166,34 @@ if st.button(LABELS["simulate_btn"]):
     ax.legend()
     st.pyplot(fig)
 
-    # Outcome
+    # Feedback
     if any(m < collapse_threshold for m in mood):
         st.error(LABELS["feedback_risk"])
     else:
         st.success(LABELS["feedback_ok"])
 
-    st.markdown("---")
-    st.markdown("### 📐 Model Explanation")
-    st.latex(r'dM_t = \mu\,dt + \sigma\,dW_t + J_t\,dN_t')
-    st.markdown("""
-This model assumes mood changes with:
-- \( \mu \): recovery tendency
-- \( \sigma \): natural emotional volatility
-- \( J_t \): emotional shock size
-- \( dN_t \): random occurrence of shocks (e.g. social conflict, trauma)
-    """)
+    # LaTeX model
+    st.markdown("### 📐 Model Explanation" if lang == "English" else "### 📐 Penjelasan Model")
+    st.latex(r'dM_t = \mu (M^* - M_t)\,dt + \sigma_t\,dW_t + J_t\,dN_t')
+
+    with st.expander("📊 Parameter Descriptions" if lang == "English" else "📊 Deskripsi Parameter"):
+        st.markdown(r"""
+- \( M_t \): Current mood
+- \( M^* \): Baseline mood (e.g. 60)
+- \( \mu \): Recovery speed
+- \( \sigma_t \): Emotional volatility, either adaptive or stochastic
+- \( dW_t \): Random mood shifts (Brownian motion)
+- \( J_t \): Mood shocks (trauma, conflict)
+- \( dN_t \): Random occurrence of shocks (Poisson process)
+        """ if lang == "English" else r"""
+- \( M_t \): Mood saat ini
+- \( M^* \): Mood ideal (misal: 60)
+- \( \mu \): Kecepatan pemulihan
+- \( \sigma_t \): Volatilitas emosi, adaptif atau stokastik
+- \( dW_t \): Perubahan mood acak (proses Brown)
+- \( J_t \): Guncangan emosi (trauma, konflik)
+- \( dN_t \): Kejadian acak dari guncangan (proses Poisson)
+        """)
 
 # --- HUG Info Section ---
 st.markdown("## 💬 About HUG")

@@ -104,5 +104,16 @@ if st.button(TEXT["simulate_button"][lang]):
     else:
         st.success(TEXT["outcome_ok"][lang])
 
-    st.markdown("---")
+    st.markdown("### 🧠 Mathematical Model (Jump-Diffusion)")
+    st.latex(r'dM_t = \mu\,dt + \sigma_t\,dW_t + J_t\,dN_t')
+    st.latex(r'd\sigma_t = \kappa(\theta - \sigma_t)\,dt + \eta\,dB_t')
+
+    st.markdown("""
+    - \( M_t \): mood over time  
+    - \( \mu \): baseline emotional drift  
+    - \( \sigma_t \): volatility of mood  
+    - \( J_t \): emotional jump (positive or negative)  
+    - If \( M_t < 30 \): flag as collapse trajectory
+    """)
+
     st.caption("HUG demo – not a diagnostic tool. / demo HUG – bukan alat diagnosis.")

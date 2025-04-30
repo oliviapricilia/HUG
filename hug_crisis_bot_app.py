@@ -19,10 +19,22 @@ if st.button("🆘 I'm not feeling okay (Activate Crisis Mode)"):
 - Grab a glass of water or walk to a window.
         """)
 
-    with st.expander("💬 Try typing out what you're feeling"):
+    with st.expander("💬 Talk to HUG"):
+    with st.form(key="crisis_chat"):
         user_input = st.text_area("What’s happening for you right now?")
-        if user_input:
-            st.markdown("✅ Thank you for sharing. Just typing it out can help shift the weight a little.")
+        submitted = st.form_submit_button("Send")
+
+    if submitted and user_input:
+        st.markdown(f"🫂 You said: *{user_input}*")
+
+        if any(word in user_input.lower() for word in ["hopeless", "give up", "suicidal", "kill", "end it"]):
+            st.warning("💔 That sounds really heavy. Please consider calling a crisis line or reaching out to someone you trust. You don’t have to go through this alone.")
+        elif any(word in user_input.lower() for word in ["anxious", "nervous", "panic"]):
+            st.info("🫁 Try a grounding technique: 5 deep breaths, or list 3 things you can see, hear, and touch.")
+        elif any(word in user_input.lower() for word in ["sad", "cry", "alone", "hurt"]):
+            st.info("💙 It’s okay to feel what you’re feeling. You’re not alone, and this feeling won’t last forever.")
+        else:
+            st.success("✅ Thank you for sharing. Sometimes just expressing it helps a little.")
 
     with st.expander("📞 Helpful Resources"):
         st.markdown("""

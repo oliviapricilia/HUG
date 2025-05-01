@@ -25,7 +25,7 @@ if "anchors" not in st.session_state:
 if "crisis_mode" not in st.session_state:
     st.session_state.crisis_mode = False
 if "bully_mode" not in st.session_state:
-    st.session_state.bully_mode = 
+    st.session_state.bully_mode = False
     st.session_state.anchors = []
 
 # Language toggle

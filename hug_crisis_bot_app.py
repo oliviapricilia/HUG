@@ -166,6 +166,16 @@ if st.button(LABELS["simulate_btn"]):
     ax.legend()
     st.pyplot(fig)
 
+    # Additional plot for stochastic volatility
+    if use_stoch_vol:
+        fig2, ax2 = plt.subplots(figsize=(10, 2.5))
+        ax2.plot(sigma_path, label="Volatility", color="purple")
+        ax2.set_xlabel("Time" if lang == "English" else "Waktu")
+        ax2.set_ylabel("Volatility" if lang == "English" else "Volatilitas")
+        ax2.set_title("Stochastic Volatility Path" if lang == "English" else "Lintasan Volatilitas Stokastik")
+        ax2.legend()
+        st.pyplot(fig2)
+
     # Feedback
     if any(m < collapse_threshold for m in mood):
         st.error(LABELS["feedback_risk"])
@@ -175,9 +185,9 @@ if st.button(LABELS["simulate_btn"]):
     # LaTeX model
     st.markdown("### 📊 Model Explanation" if lang == "English" else "### 📊 Penjelasan Model")
     st.latex(r'dM_t = \mu (M^* - M_t)\,dt + \sigma_t\,dW_t + J_t\,dN_t')
-    st.latex(r'd\sigma_t = \kappa(\theta - \sigma_t)\,dt + \eta\,dZ_t')
+    st.latex(r'd{\sigma}_t = \kappa(\theta - {\sigma}_t)\,dt + \eta\,dZ_t')
 
-    with st.expander("\ud83d\udcca Parameter Descriptions" if lang == "English" else "\ud83d\udcca Deskripsi Parameter"):
+    with st.expander("Parameter Descriptions" if lang == "English" else "Deskripsi Parameter"):
         st.markdown("""
 - $M_t$: Current mood / Mood saat ini  
 - $M^*$: Baseline mood (e.g. 60) / Mood ideal (misal: 60)  
@@ -192,7 +202,6 @@ if st.button(LABELS["simulate_btn"]):
 - $\eta$: Noise strength in volatility / Kekuatan gangguan dalam volatilitas  
 - $dZ_t$: Random noise for volatility / Kebisingan acak untuk volatilitas
 """)
-
 
 
 # --- HUG Info Section ---

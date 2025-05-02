@@ -187,7 +187,7 @@ elif page == "Mood Report":
             st.session_state.log.pop()
             pd.DataFrame(st.session_state.log).to_csv(DATA_FILE, index=False)
             st.success("Last entry deleted.")
-            st.experimental_rerun()
+            st.rerun()
 
         if "Date" in df.columns:
             df["Date"] = pd.to_datetime(df["Date"])

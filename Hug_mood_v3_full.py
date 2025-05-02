@@ -17,11 +17,16 @@ import os
 #    st.session_state.log = df_log.to_dict("records")
 #else:
 #    st.session_state.log = []
-## Ask for user ID
-#user_id = st.text_input("Enter your private ID", value="", type="password")
-#if not user_id:
-#    st.warning("Please enter your ID to continue.")
-#    st.stop()
+
+
+# Ask for user ID
+user_id = st.text_input("Enter your private ID", value="", type="password")
+if not user_id:
+    st.warning("Please enter your ID to continue.")
+    st.stop()
+
+# File based on user ID
+DATA_FILE = f"mood_log_{user_id}.csv"
 
 # File based on user ID
 DATA_FILE = f"mood_log_{user_id}.csv"

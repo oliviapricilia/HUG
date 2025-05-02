@@ -5,18 +5,42 @@ import datetime
 import matplotlib.pyplot as plt
 import os
 
-st.set_page_config(page_title="Moodrift + HUG", layout="wide")
+#st.set_page_config(page_title="Moodrift + HUG", layout="wide")
 
-# File persistence
-DATA_FILE = "mood_log.csv"
+## File persistence
+#DATA_FILE = "mood_log.csv"
 
 # Load existing data
-if os.path.exists(DATA_FILE):
-    df_log = pd.read_csv(DATA_FILE)
-    df_log["Date"] = pd.to_datetime(df_log["Date"]).dt.date
-    st.session_state.log = df_log.to_dict("records")
-else:
-    st.session_state.log = []
+#if os.path.exists(DATA_FILE):
+#    df_log = pd.read_csv(DATA_FILE)
+#    df_log["Date"] = pd.to_datetime(df_log["Date"]).dt.date
+#    st.session_state.log = df_log.to_dict("records")
+#else:
+#    st.session_state.log = []
+## Ask for user ID
+#user_id = st.text_input("Enter your private ID", value="", type="password")
+#if not user_id:
+#    st.warning("Please enter your ID to continue.")
+#    st.stop()
+
+# File based on user ID
+DATA_FILE = f"mood_log_{user_id}.csv"
+
+# Initialize session state
+if "log" not in st.session_state:
+    if os.path.exists(DATA_FILE):
+        try:
+            df_log = pd.read_csv(DATA_FILE)
+            if not df_log.empty and "Date" in df_log.columns:
+                df_log["Date"] = pd.to_datetime(df_log["Date"]).dt.date
+                st.session_state.log = df_log.to_dict("records")
+            else:
+                st.session_state.log = []
+        except Exception as e:
+            st.warning(f"Failed to load your data: {e}")
+            st.session_state.log = []
+    else:
+        st.session_state.log = []
 
 if "letters" not in st.session_state:
     st.session_state.letters = []
@@ -151,18 +175,24 @@ elif page == "Mood Report":
         st.info("No mood data yet.")
     else:
         df = pd.DataFrame(st.session_state.log)
+
         st.dataframe(df.tail(10))
 
-        if st.button("Delete Last Entry"):
+        if st.button("Delete Last Entry") and len(df) > 0:
             st.session_state.log.pop()
             pd.DataFrame(st.session_state.log).to_csv(DATA_FILE, index=False)
             st.success("Last entry deleted.")
+            st.experimental_rerun()
 
-        st.line_chart(df.set_index("Date")[["Mood", "Energy", "Sleep"]].rolling(3).mean())
+        if "Date" in df.columns:
+            df["Date"] = pd.to_datetime(df["Date"])
+            st.line_chart(df.set_index("Date")[["Mood", "Energy", "Sleep"]].rolling(3).mean())
 
-        fig, ax = plt.subplots()
-        df[["Confidence", "Impulsivity", "Irritability"]].tail(7).plot(kind="bar", ax=ax)
-        st.pyplot(fig)
+        if set(["Confidence", "Impulsivity", "Irritability"]).issubset(df.columns):
+            fig, ax = plt.subplots()
+            df[["Confidence", "Impulsivity", "Irritability"]].tail(7).plot(kind="bar", ax=ax)
+            st.pyplot(fig)
+
 
 # ---------- 3. LETTER TO SELF ----------
 elif page == "Letter to Self":
